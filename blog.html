@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Blog - AI Blog Manager</title>
+
+  <style>
+    :root{
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #6f4ef1;
+      --accent-2: #8b63ff;
+      --glass: rgba(255,255,255,0.85);
+      --radius: 14px;
+      --shadow: 0 8px 30px rgba(16,24,40,0.06);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: linear-gradient(180deg,var(--bg) 0%, #eef1fb 100%);
+      color:#0f1724;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:28px 20px;
+    }
+
+    /* NAV / HEADER */
+    .nav {
+      max-width:1100px;
+      margin:0 auto 22px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .brand {
+      display:flex;align-items:center;gap:12px;
+    }
+    .logo {
+      width:44px;height:44px;border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:white;display:flex;align-items:center;justify-content:center;
+      font-weight:800;box-shadow:0 8px 24px rgba(111,78,241,0.12);
+    }
+    .brand h1{font-size:20px;margin:0;color:var(--accent);letter-spacing:0.2px}
+    .nav-links { display:flex; gap:14px; align-items:center; }
+    .nav-links a {
+      color:#1f2937;text-decoration:none;font-weight:600;padding:8px 10px;border-radius:8px;
+    }
+    .nav-links a:hover{background:rgba(99,84,255,0.06); color:var(--accent)}
+
+    /* page container */
+    .wrap { max-width:1100px; margin:0 auto; }
+
+    /* toolbar */
+    .toolbar {
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .left-tools { display:flex; gap:10px; align-items:center; }
+    .search {
+      display:flex; gap:8px; align-items:center;
+      background:var(--card); padding:8px 12px; border-radius:12px;
+      box-shadow:var(--shadow); border:1px solid rgba(8,9,12,0.03);
+    }
+    .search input{
+      border:0; outline:0; font-size:14px; width:260px;
+    }
+    .filters { display:flex; gap:8px; align-items:center; }
+    .chip {
+      padding:8px 12px; border-radius:999px; background:transparent; border:1px solid rgba(99,84,255,0.08);
+      cursor:pointer; font-weight:600; color:#334155;
+    }
+    .chip.active { background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; border:0; box-shadow:0 10px 28px rgba(124,95,255,0.12);}
+
+    .actions { display:flex; gap:10px; align-items:center; }
+    .btn {
+      border:0; padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; box-shadow:0 8px 28px rgba(124,95,255,0.12);
+    }
+    .btn.ghost { background:transparent; color:#334155; border:1px solid rgba(16,24,40,0.06); box-shadow:none; }
+
+    /* posts grid */
+    .grid { display:grid; grid-template-columns: repeat(3,1fr); gap:18px; margin-top:18px; }
+    @media (max-width:980px){ .grid{ grid-template-columns: repeat(2,1fr);} .search input { width:160px } }
+    @media (max-width:640px){ .grid{ grid-template-columns: 1fr;} .nav { flex-direction:column; align-items:flex-start } }
+
+    .card {
+      background:var(--card); padding:18px; border-radius:14px; box-shadow:var(--shadow); border:1px solid rgba(8,9,12,0.03);
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .card h3 { margin:0; font-size:18px; color:#0f1724; }
+    .meta { font-size:13px; color:var(--muted); display:flex; gap:10px; align-items:center; }
+    .excerpt { color:#374151; font-size:14px; line-height:1.45; }
+    .card .tags { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+    .tag { font-size:12px; padding:6px 8px; border-radius:8px; background:rgba(99,84,255,0.06); color:var(--accent); font-weight:700; }
+
+    /* empty / no results */
+    .empty { text-align:center; padding:36px; color:var(--muted) }
+
+    /* modal new post */
+    .modal-backdrop { position:fixed; inset:0; display:none; place-items:center; background:rgba(8,9,10,0.45); z-index:80; }
+    .modal { width:720px; max-width:95%; background:white; padding:20px; border-radius:12px; box-shadow:0 20px 60px rgba(6,7,12,0.4); }
+    .modal h2{ margin:0 0 8px 0; }
+    .row{ display:flex; gap:10px; margin-top:10px; }
+    .input, textarea { width:100%; padding:12px; border-radius:10px; border:1px solid #e6e9ef; font-size:14px; }
+    textarea{ min-height:160px; resize:vertical; }
+
+    /* small footer */
+    footer { margin-top:42px; text-align:center; color:var(--muted); font-size:13px; }
+
+    /* nice hover link for read more */
+    .read-more { margin-top:auto; text-decoration:none; color:var(--accent); font-weight:700; }
+    .read-more:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="brand">
+      <div class="logo">AI</div>
+      <div>
+        <h1>AI Blog Manager</h1>
+        <div style="font-size:12px;color:var(--muted)">Create • Manage • Publish</div>
+      </div>
+    </div>
+
+    <div class="nav-links">
+      <!-- If linking from index, you can also add a back link here -->
+      <a href="index.html" class="ghost">Home</a>
+      <a href="#blogs">Blogs</a>
+      <a href="#contact">Contact</a>
+      <a href="#" id="openCreateBtn" class="btn">+ New Post</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <!-- toolbar -->
+    <div class="toolbar">
+      <div class="left-tools">
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="#9aa4c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="#9aa4c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <input id="searchInput" placeholder="Search posts, keywords or titles..." />
+        </div>
+
+        <div class="filters" id="categoryList">
+          <div class="chip active" data-cat="all">All</div>
+          <div class="chip" data-cat="ai">AI</div>
+          <div class="chip" data-cat="productivity">Productivity</div>
+          <div class="chip" data-cat="tutorial">Tutorial</div>
+          <div class="chip" data-cat="news">News</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="refreshBtn" class="btn ghost">Refresh</button>
+        <button id="openCreateBtn2" class="btn">+ New Post</button>
+      </div>
+    </div>
+
+    <!-- posts grid -->
+    <section id="blogs" class="grid" aria-live="polite"></section>
+
+    <div id="noResults" class="empty" style="display:none">No posts found. Try another search or add a new post.</div>
+
+    <footer>
+      &copy; <span id="year"></span> AI Blog Manager — Demo • LocalStorage posts
+    </footer>
+  </main>
+
+  <!-- Modal create -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h2>Create New Post</h2>
+      <div style="color:var(--muted);font-size:13px">Write a blog post — saved to browser (local demo)</div>
+
+      <div class="row" style="margin-top:12px;">
+        <input id="postTitle" class="input" placeholder="Post title" />
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <input id="postCategory" class="input" placeholder="Category (e.g. ai, tutorial, news)" />
+      </div>
+
+      <div style="margin-top:12px;">
+        <textarea id="postContent" placeholder="Write your post content..."></textarea>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px;">
+        <button id="closeModal" class="btn ghost">Cancel</button>
+        <button id="savePost" class="btn">Publish</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- helpers and initial seed posts ---
+    const samplePosts = [
+      { id: genId(), title: "How AI speeds up blog writing", category:"ai", content: "AI can help generate outlines, improve clarity and speed up drafting..." , date: new Date().toLocaleDateString() },
+      { id: genId(), title: "5 Productivity tips for creators", category:"productivity", content: "Focus blocks, batching, and automation are your friends..." , date: new Date().toLocaleDateString() },
+      { id: genId(), title: "Step-by-step: Build a simple scraper", category:"tutorial", content: "This tutorial walks you through a simple web scraping setup..." , date: new Date().toLocaleDateString() },
+    ];
+
+    function genId(){ return 'p_'+Math.random().toString(36).slice(2,9); }
+
+    // storage
+    function loadPosts(){
+      const raw = localStorage.getItem('posts_v1');
+      if(!raw) { localStorage.setItem('posts_v1', JSON.stringify(samplePosts)); return samplePosts; }
+      try { return JSON.parse(raw) } catch(e){ localStorage.removeItem('posts_v1'); return samplePosts; }
+    }
+    function savePosts(posts){ localStorage.setItem('posts_v1', JSON.stringify(posts)); }
+
+    // DOM refs
+    const grid = document.getElementById('blogs');
+    const searchInput = document.getElementById('searchInput');
+    const categoryList = document.getElementById('categoryList');
+    const noResults = document.getElementById('noResults');
+    const yearEl = document.getElementById('year');
+
+    // modal refs
+    const modal = document.getElementById('modalBackdrop');
+    const openBtns = document.querySelectorAll('#openCreateBtn, #openCreateBtn2');
+    const closeModalBtns = document.querySelectorAll('#closeModal');
+    const saveBtn = document.getElementById('savePost');
+    const titleInput = document.getElementById('postTitle');
+    const categoryInput = document.getElementById('postCategory');
+    const contentInput = document.getElementById('postContent');
+
+    // state
+    let posts = loadPosts();
+    let activeCategory = 'all';
+    let query = '';
+
+    // render
+    function renderList(){
+      const q = query.trim().toLowerCase();
+      const filtered = posts.filter(p=>{
+        const matchCat = (activeCategory==='all') || (p.category && p.category.toLowerCase()===activeCategory);
+        const matchQ = !q || (p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q) || (p.category && p.category.toLowerCase().includes(q)));
+        return matchCat && matchQ;
+      });
+
+      grid.innerHTML = '';
+      if(filtered.length === 0){ noResults.style.display='block'; return; } else noResults.style.display='none';
+
+      filtered.forEach(p=>{
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+            <div>
+              <h3>${escapeHtml(p.title)}</h3>
+              <div class="meta">${escapeHtml(p.date)} • <span style="text-transform:capitalize">${escapeHtml(p.category||'general')}</span></div>
+            </div>
+            <div style="text-align:right;">
+              <button style="border:0;background:transparent;color:var(--muted);cursor:pointer;font-weight:600" onclick="deletePost('${p.id}')">Delete</button>
+            </div>
+          </div>
+          <div class="excerpt">${escapeHtml(p.content).slice(0,240)}${p.content.length>240?'...':''}</div>
+          <div class="tags"><span class="tag">${escapeHtml(p.category||'general')}</span></div>
+          <a class="read-more" href="#" onclick="viewPost('${p.id}');return false;">Read more →</a>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // small helpers
+    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+
+    // actions
+    searchInput.addEventListener('input', (e)=>{ query=e.target.value; renderList(); });
+
+    categoryList.addEventListener('click', (e)=>{
+      const chip = e.target.closest('.chip');
+      if(!chip) return;
+      document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      activeCategory = chip.dataset.cat;
+      renderList();
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', ()=>{
+      posts = loadPosts(); renderList();
+    });
+
+    // modal open/close
+    openBtns.forEach(b=>b.addEventListener('click', ()=> { modal.style.display='grid'; }));
+    closeModalBtns.forEach(b=>b.addEventListener('click', ()=> { modal.style.display='none'; }));
+
+    saveBtn.addEventListener('click', ()=>{
+      const t = titleInput.value.trim();
+      const c = contentInput.value.trim();
+      const cat = (categoryInput.value || 'general').trim().toLowerCase();
+      if(!t || !c) return alert('Title and content required.');
+      const p = { id: genId(), title:t, content:c, category:cat, date: new Date().toLocaleDateString() };
+      posts.unshift(p);
+      savePosts(posts);
+      modal.style.display='none';
+      titleInput.value=''; categoryInput.value=''; contentInput.value='';
+      activeCategory='all'; document.querySelector('.chip[data-cat="all"]').classList.add('active');
+      renderList();
+      alert('Post published (saved locally).');
+    });
+
+    // delete post (confirm)
+    window.deletePost = function(id){
+      if(!confirm('Delete this post?')) return;
+      posts = posts.filter(p=>p.id!==id);
+      savePosts(posts);
+      renderList();
+    };
+
+    // view post (quick modal)
+    window.viewPost = function(id){
+      const p = posts.find(x=>x.id===id);
+      if(!p) return;
+      // simple large modal view (reuse modal area)
+      modal.style.display='grid';
+      const html = `
+        <div class="modal" role="dialog" aria-modal="true">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h2>${escapeHtml(p.title)}</h2>
+            <button style="border:0;background:none;font-size:22px;cursor:pointer" onclick="document.getElementById('modalBackdrop').style.display='none'">×</button>
+          </div>
+          <div style="color:var(--muted);margin-top:6px">${escapeHtml(p.date)} • ${escapeHtml(p.category)}</div>
+          <div style="margin-top:14px;line-height:1.6;color:#0f1724;">${escapeHtml(p.content).replace(/\n/g,'<br>')}</div>
+          <div style="display:flex;justify-content:flex-end;margin-top:16px">
+            <button onclick="document.getElementById('modalBackdrop').style.display='none'" class="btn ghost">Close</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('modalBackdrop').innerHTML = html;
+    };
+
+    // initialize
+    yearEl.textContent = new Date().getFullYear();
+    renderList();
+  </script>
+</body>
+</html>
