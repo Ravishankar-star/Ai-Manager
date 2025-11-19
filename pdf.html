@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PDF Analyzer - AI Blog Manager</title>
+
+  <!-- pdf.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.13.216/pdf.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent-1:#6f4ef1;
+      --accent-2:#8b63ff;
+      --radius:14px;
+      --shadow:0 10px 30px rgba(16,24,40,0.06);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      min-height:100vh;
+      background: linear-gradient(180deg,var(--bg) 0%, #eef1fb 100%);
+      color:#0f1724;
+      padding:28px;
+    }
+
+    .container{ max-width:1100px; margin:0 auto; display:grid; gap:18px; }
+
+    .header{
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .brand { display:flex; gap:12px; align-items:center; }
+    .logo{ width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent-1),var(--accent-2)); color:white;display:flex;align-items:center;justify-content:center;font-weight:800; box-shadow:0 10px 24px rgba(111,78,241,0.12); }
+    h1{ margin:0; font-size:20px; color:var(--accent-1) }
+    .sub{ color:var(--muted); font-size:13px }
+
+    .card{
+      background:var(--card); border-radius:14px; padding:18px; box-shadow:var(--shadow); border:1px solid rgba(8,9,12,0.03);
+    }
+
+    .grid { display:grid; grid-template-columns: 1fr 380px; gap:18px; align-items:start; }
+    @media (max-width:980px){ .grid{ grid-template-columns: 1fr; } }
+
+    /* drop area */
+    .drop {
+      border:2px dashed rgba(111,78,241,0.10);
+      border-radius:12px;
+      padding:22px;
+      text-align:center;
+      background:linear-gradient(180deg, rgba(111,78,241,0.02), transparent);
+      min-height:220px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:12px;
+      transition:box-shadow .18s ease, transform .12s ease;
+    }
+    .drop.drag { box-shadow:0 20px 60px rgba(99,84,255,0.06); transform:translateY(-4px); }
+
+    .choose { display:inline-block; padding:10px 14px; border-radius:10px; background:white; border:1px solid rgba(111,78,241,0.12); cursor:pointer; font-weight:700; }
+    .selected { color:var(--muted); font-size:13px }
+
+    .progress { height:10px; background:#f1f3f8; border-radius:999px; overflow:hidden; margin-top:8px; }
+    .progress > span { display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--accent-1),var(--accent-2)); transition:width .4s ease; }
+
+    /* right panel */
+    .analysis h4 { margin:0 0 8px 0; font-size:15px; }
+    .analysis p{ margin:0;color:var(--muted); font-size:13px }
+
+    .preview { margin-top:12px; background:#faf8ff; padding:12px; border-radius:10px; border:1px solid #f0e9ff; max-height:280px; overflow:auto; font-size:14px; color:#111827; white-space:pre-wrap; }
+
+    .actions { display:flex; gap:8px; margin-top:14px; justify-content:flex-start; flex-wrap:wrap; }
+    .btn { padding:10px 12px; border-radius:10px; cursor:pointer; border:0; font-weight:700; background:linear-gradient(90deg,var(--accent-1),var(--accent-2)); color:white; box-shadow:0 8px 28px rgba(124,95,255,0.12); }
+    .btn.ghost { background:transparent; color:#374151; border:1px solid rgba(16,24,40,0.06); box-shadow:none; }
+
+    /* results area */
+    .result-block { margin-top:12px; }
+    .result-block h5 { margin:0 0 8px 0; font-size:14px; color:#111827; }
+    .keywords { display:flex; gap:8px; flex-wrap:wrap; }
+    .kw { background:#f1f5ff; color:var(--accent-1); padding:8px 10px; border-radius:8px; font-weight:700; font-size:13px }
+
+    /* footer */
+    footer { margin-top:18px; text-align:center; color:var(--muted); font-size:13px; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="logo">AI</div>
+        <div>
+          <h1>PDF Analyzer</h1>
+          <div class="sub">Upload a PDF → extract text, headings, keywords & a short summary (client-side)</div>
+        </div>
+      </div>
+
+      <div>
+        <a href="index.html" style="text-decoration:none"><button class="btn btn-small">← Back</button></a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- left: upload -->
+      <div class="card drop" id="dropArea">
+        <div style="font-weight:700; font-size:15px; color:#111827">Upload a PDF or drag & drop</div>
+        <div style="color:var(--muted); font-size:13px">Choose file to analyze headings, keywords and summary</div>
+
+        <div style="display:flex; gap:8px; justify-content:center; align-items:center;">
+          <label class="choose" for="pdfInput">Choose file</label>
+          <input id="pdfInput" type="file" accept="application/pdf" style="display:none">
+          <button id="analyzeBtn" class="btn">Analyze</button>
+        </div>
+
+        <div class="selected" id="selectedFile">No file selected</div>
+
+        <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+        <div style="font-size:13px; color:var(--muted); margin-top:8px; text-align:left;">
+          <strong>Tip:</strong> If your PDF has many images or scanned pages, text extraction may be incomplete. For OCR you'd need server-side OCR (Tesseract) or an external OCR API.
+        </div>
+      </div>
+
+      <!-- right: analysis -->
+      <div class="card analysis">
+        <h4>Analysis results</h4>
+        <p id="analysisText">No results yet. Upload and click <strong>Analyze</strong> to extract text and generate a summary.</p>
+
+        <div class="result-block">
+          <h5>Detected Headings</h5>
+          <div id="headings" style="color:var(--muted); font-size:13px">—</div>
+        </div>
+
+        <div class="result-block">
+          <h5>Top keywords</h5>
+          <div class="keywords" id="keywords">—</div>
+        </div>
+
+        <div class="result-block">
+          <h5>Summary</h5>
+          <div id="summary" class="preview">—</div>
+        </div>
+
+        <div class="result-block">
+          <h5>Full extracted text (preview)</h5>
+          <div id="textPreview" class="preview">—</div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer>
+      Demo — client-side PDF extraction with pdf.js • No external summary API required.
+    </footer>
+  </div>
+
+  <script>
+    // pdf.js worker
+    if(pdfjsLib && pdfjsLib.GlobalWorkerOptions){
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.13.216/pdf.worker.min.js';
+    }
+
+    // DOM refs
+    const pdfInput = document.getElementById('pdfInput');
+    const dropArea = document.getElementById('dropArea');
+    const selectedFile = document.getElementById('selectedFile');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const progressBar = document.getElementById('progressBar');
+    const analysisText = document.getElementById('analysisText');
+    const textPreview = document.getElementById('textPreview');
+    const summaryDiv = document.getElementById('summary');
+    const keywordsDiv = document.getElementById('keywords');
+    const headingsDiv = document.getElementById('headings');
+
+    let currentFile = null;
+
+    // file select
+    pdfInput.addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      setFile(f);
+    });
+
+    document.querySelector('.choose').addEventListener('click', ()=>{
+      pdfInput.click();
+    });
+
+    function setFile(f){
+      if(!f) {
+        selectedFile.textContent = 'No file selected';
+        currentFile = null;
+        return;
+      }
+      currentFile = f;
+      selectedFile.textContent = `${f.name} (${Math.round(f.size/1024)} KB)`;
+    }
+
+    // drag/drop
+    ['dragenter','dragover'].forEach(ev=> dropArea.addEventListener(ev, e=>{ e.preventDefault(); dropArea.classList.add('drag'); }));
+    ['dragleave','drop'].forEach(ev=> dropArea.addEventListener(ev, e=>{ e.preventDefault(); dropArea.classList.remove('drag'); }));
+    dropArea.addEventListener('drop', (e)=>{
+      const dt = e.dataTransfer;
+      if(dt && dt.files && dt.files[0]) {
+        pdfInput.files = dt.files; // set file input
+        const evt = new Event('change'); pdfInput.dispatchEvent(evt);
+      }
+    });
+
+    // analyze
+    analyzeBtn.addEventListener('click', () => {
+      if(!currentFile) { alert('Please choose a PDF first.'); return; }
+      extractAndSummarize(currentFile);
+    });
+
+    // extraction + summarization flow
+    async function extractAndSummarize(file){
+      analysisText.textContent = 'Extracting text...';
+      progressBar.style.width = '6%';
+      textPreview.textContent = '';
+      summaryDiv.textContent = 'Working...';
+      headingsDiv.textContent = '—';
+      keywordsDiv.innerHTML = '—';
+
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        progressBar.style.width = '12%';
+
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const total = pdf.numPages;
+        let fullText = '';
+        // extract page by page
+        for(let i=1;i<=total;i++){
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          const pageText = content.items.map(item => item.str).join(' ');
+          fullText += pageText + '\n\n';
+          // progress update
+          const p = Math.round((i/total)*80) + 10;
+          progressBar.style.width = p + '%';
+        }
+
+        progressBar.style.width = '95%';
+        textPreview.textContent = fullText.trim().slice(0, 12000) || '(no text extracted)';
+
+        // extract headings heuristically (lines with Title Case / shorter & uppercase)
+        const headings = findHeadings(fullText);
+        headingsDiv.innerHTML = headings.length ? headings.map(h => `<div style="margin-bottom:6px">${escapeHtml(h)}</div>`).join('') : '—';
+
+        // keywords (simple frequency)
+        const kws = topKeywords(fullText, 12);
+        keywordsDiv.innerHTML = kws.map(k => `<span class="kw">${escapeHtml(k)}</span>`).join('');
+
+        // summary (simple extractive: top sentences)
+        const summ = summarizeText(fullText, 6);
+        summaryDiv.textContent = summ || 'Could not generate summary from extracted text.';
+
+        analysisText.textContent = `Extracted from ${total} page(s).`;
+        progressBar.style.width = '100%';
+        setTimeout(()=>progressBar.style.width='0%', 800);
+      } catch(err){
+        console.error(err);
+        alert('Error extracting PDF: ' + (err && err.message ? err.message : err));
+        analysisText.textContent = 'Error extracting PDF.';
+        progressBar.style.width = '0%';
+        summaryDiv.textContent = '—';
+        textPreview.textContent = '—';
+        headingsDiv.textContent = '—';
+        keywordsDiv.innerHTML = '—';
+      }
+    }
+
+    // ---------- small local NLP helpers (very simple) ----------
+    function summarizeText(text, maxSentences=4){
+      if(!text) return '';
+      // split into sentences (very naive)
+      const sents = text.replace(/\s+/g,' ').match(/[^\.!\?]+[\.!\?]*/g) || [text];
+      if(sents.length <= maxSentences) return sents.join(' ').trim();
+
+      // compute word frequencies
+      const freq = buildFreq(text);
+      // score sentences
+      const scores = sents.map(s=>{
+        const words = s.toLowerCase().replace(/[^a-z0-9\s]/g,'').split(/\s+/).filter(Boolean);
+        let sc = 0;
+        words.forEach(w => { sc += (freq[w]||0); });
+        return sc / Math.sqrt(words.length||1); // normalize a bit
+      });
+
+      // pick top N sentences in original order
+      const ranked = sents.map((s,i)=>({i, s, score: scores[i]}))
+                         .sort((a,b)=>b.score - a.score)
+                         .slice(0, maxSentences)
+                         .sort((a,b)=>a.i - b.i)
+                         .map(x=>x.s.trim());
+      return ranked.join(' ');
+    }
+
+    function buildFreq(text){
+      const words = (text||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>2);
+      const stop = new Set(['the','and','with','for','that','this','your','from','have','are','was','but','not','will','can','which','has','its','also','these','such']);
+      const freq = {};
+      words.forEach(w=>{
+        if(stop.has(w)) return;
+        freq[w] = (freq[w]||0) + 1;
+      });
+      return freq;
+    }
+
+    function topKeywords(text, n=8){
+      const freq = buildFreq(text);
+      const arr = Object.keys(freq).map(k=>({k, v:freq[k]})).sort((a,b)=>b.v-a.v).slice(0,n);
+      return arr.map(x=>x.k);
+    }
+
+    function findHeadings(text){
+      if(!text) return [];
+      // heuristic: lines that are short and have some capital words, or lines in ALL CAPS
+      const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+      const cand = [];
+      lines.forEach(l=>{
+        if(l.length < 6) return;
+        if(l.length > 120) return;
+        const words = l.split(/\s+/);
+        const capCount = words.filter(w => /^[A-Z][a-z0-9]+/.test(w)).length;
+        const upperRatio = (l.replace(/[^A-Z]/g,'').length) / Math.max(1,l.length);
+        if(capCount >= Math.max(1, Math.floor(words.length/2)) || upperRatio > 0.35 || (words.length<=6 && capCount>=1)){
+          cand.push(l.replace(/\s{2,}/g,' ').trim());
+        }
+      });
+      // unique & short list
+      const uniq = [...new Set(cand)].slice(0,8);
+      return uniq;
+    }
+
+    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+
+  </script>
+</body>
+</html>
