@@ -1,0 +1,1444 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <!-- Premium Navbar -->
+<nav class="premium-navbar">
+    <div class="nav-left">
+        <span class="logo">AI Blog Manager</span>
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="blogs.html">Blogs</a></li>
+        <li><a href="pdf.html">PDF Tool</a></li>
+        <li><a href="#" id="aboutBtn">About</a></li>
+    </ul>
+</nav>
+
+<!-- ABOUT POPUP MODAL -->
+<div class="about-modal" id="aboutModal">
+    <div class="about-content">
+        <span class="close-about" id="closeAbout">&times;</span>
+
+        <h2>About Me</h2>
+        <p>Hello! I'm <b>Ravi Shankar</b>, a passionate and dedicated individual working towards 
+        building meaningful digital experiences and innovative solutions.</p>
+
+        <p>I believe in hard work, smart planning, and delivering value to the people I work with.  
+        With a strong interest in business, technology and online growth, 
+        I aim to help individuals and brands achieve their goals through practical strategies, 
+        creative thinking, and consistent effort.</p>
+
+        <p><b>My Mission:</b><br>
+        To provide impactful services, reliable information, and valuable content that can truly make a difference.</p>
+
+        <p><b>I Always Focus On:</b><br>
+        ✔ Professionalism<br>
+        ✔ Transparency<br>
+        ✔ Quality Work<br>
+        ✔ Long-term Vision</p>
+
+        <h3>📩 Contact Information</h3>
+        <p>Email: buisnessbyravi@gmail.com<br>
+        Phone: 74948 49585</p>
+    </div>
+</div>
+
+</header>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js"></script>
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Content Toolkit - Premium UI</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --muted:#98a0b3;
+      --soft:#eef3fb;
+      --accent-1: #6f4ef1; /* deep purple */
+      --accent-2: #8b63ff; /* lighter purple */
+      --accent-3: #7b8cff; /* blue-ish */
+      --glass: rgba(255,255,255,0.85);
+      --radius: 14px;
+      --shadow: 0 6px 22px rgba(29,30,40,0.08);
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: linear-gradient(180deg,#f6f7fb 0%, #f2f3f8 100%);
+      color:#111827;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:32px;
+    }
+
+    .container{
+      max-width:980px;
+      margin:0 auto;
+      display:grid;
+      gap:28px;
+    }
+
+    /* Top sample card (Content Toolkit) */
+    .toolkit{
+      background:var(--card);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:20px;
+      display:grid;
+      grid-template-columns: 220px 1fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    /* Left sidebar modules */
+    .modules{
+      background: linear-gradient(180deg, rgba(123,140,255,0.06), rgba(139,99,255,0.03));
+      border-radius:12px;
+      padding:14px;
+      min-height:240px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .module{
+      background:linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6));
+      border-radius:10px;
+      padding:12px;
+      border:1px solid rgba(120,130,160,0.06);
+      font-size:13px;
+    }
+    .module h4{margin:0 0 4px 0; font-weight:700; font-size:13px;}
+    .module p{margin:0; color:var(--muted); font-size:12px}
+
+    /* Right main area */
+    .main{
+      background:transparent;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:12px;
+    }
+    .title{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .title h2{margin:0; font-size:18px;}
+    .title p{margin:0; font-size:13px; color:var(--muted)}
+
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .btn{
+      border:0;
+      padding:8px 12px;
+      border-radius:10px;
+      font-weight:600;
+      cursor:pointer;
+      box-shadow:0 4px 14px rgba(111,78,241,0.18);
+    }
+    .btn.ghost{
+      background:transparent;
+      color:#374151;
+      border:1px solid rgba(55,65,81,0.06);
+      box-shadow:none;
+    }
+    .btn.primary{
+      background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      color:white;
+    }
+
+    /* Tabs */
+    .tabs{
+      display:flex;
+      gap:8px;
+      margin-bottom:14px;
+    }
+    .tab{
+      background:transparent;
+      border-radius:10px;
+      padding:8px 12px;
+      cursor:pointer;
+      font-weight:700;
+      border:1px solid transparent;
+      color:#334155;
+    }
+    .tab.active{
+      background:linear-gradient(180deg, rgba(123,140,255,0.12), rgba(123,140,255,0.06));
+      border-color: rgba(123,140,255,0.14);
+      color:var(--accent-1);
+      box-shadow: 0 6px 18px rgba(99,84,255,0.06);
+    }
+
+    .panel{
+      display:grid;
+      grid-template-columns: 1fr 280px;
+      gap:16px;
+      align-items:start;
+      min-height:220px;
+    }
+
+    /* left panel controls */
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:16px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(8,9,12,0.03);
+    }
+    .file-area{
+      border:1px dashed rgba(99,84,255,0.14);
+      border-radius:10px;
+      padding:18px;
+      text-align:center;
+      color:var(--muted);
+      min-height:140px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:8px;
+      background:linear-gradient(180deg, rgba(111,78,241,0.03), transparent);
+    }
+    .choose{
+      display:inline-block;
+      margin-top:8px;
+      padding:8px 14px;
+      border-radius:8px;
+      background:white;
+      border:1px solid rgba(111,78,241,0.12);
+      font-weight:600;
+      cursor:pointer;
+    }
+
+    .analyze-row{
+      display:flex;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .progress{
+      height:8px;
+      background: #f1f3f8;
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:12px;
+    }
+    .progress > span{
+      display:block;
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--accent-1),var(--accent-3));
+      transition:width .4s ease;
+    }
+
+    /* right analysis panel */
+    .analysis{
+      min-height:180px;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid rgba(14,16,20,0.03);
+    }
+    .analysis h4{margin:0 0 8px 0; font-size:14px}
+    .analysis p{margin:0; color:var(--muted); font-size:13px}
+
+    /* Below: Blog Manager card */
+    .blog-manager{
+      background:linear-gradient(180deg, rgba(139,99,255,0.04), rgba(123,140,255,0.02));
+      border-radius:16px;
+      padding:18px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(111,78,241,0.06);
+    }
+    .bm-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .bm-title{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .badge{
+      height:36px;
+      width:36px;
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(180deg,var(--accent-1),var(--accent-2));
+      color:white;
+      font-weight:700;
+      box-shadow:0 6px 14px rgba(111,78,241,0.14);
+    }
+    .bm-title h3{margin:0;}
+    .bm-title p{margin:0; color:var(--muted); font-size:13px}
+
+    .new-blog{
+      background:linear-gradient(90deg,var(--accent-2),var(--accent-3));
+      color:white;
+      border:0;
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 8px 28px rgba(124,95,255,0.12);
+    }
+
+    /* modal */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background:rgba(8,9,12,0.45);
+      display:none;
+      place-items:center;
+      z-index:60;
+    }
+    .modal{
+      background:white;
+      border-radius:12px;
+      padding:18px;
+      width:420px;
+      box-shadow:0 18px 50px rgba(5,6,10,0.3);
+    }
+    .modal h4{margin:0 0 8px 0}
+    .modal .row{display:flex;gap:8px;margin-top:10px}
+    .input{
+      flex:1;
+      border:1px solid rgba(14,16,20,0.06);
+      padding:10px;
+      border-radius:8px;
+      font-size:14px;
+    }
+
+    /* Responsive */
+    @media (max-width:880px){
+      .toolkit{grid-template-columns: 1fr; padding:14px}
+      .panel{grid-template-columns: 1fr;}
+      .container{padding:18px}
+    }
+
+    .empty-state {
+    width: 100%;
+    background: #fff;
+    border-radius: 16px;
+    padding: 60px 20px;
+    text-align: center;
+    box-shadow: 0 6px 26px rgba(0,0,0,0.07);
+    border: 1px solid #eee;
+    margin-top: 20px;
+}
+
+.empty-icon {
+    font-size: 48px;
+    opacity: 0.6;
+    margin-bottom: 10px;
+}
+
+.empty-state h2 {
+    font-size: 22px;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+}
+
+.empty-state p {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.create-first-btn {
+    background: #A020F0;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+.create-first-btn:hover {
+    opacity: 0.85;
+}
+
+.pdf-section {
+  width: 80%;
+  margin: 40px auto;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #6a11cb;
+}
+
+.pdf-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0px 8px 25px rgba(0,0,0,0.08);
+  border: 1px solid #f0e6ff;
+}
+
+.pdf-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.primary-btn {
+  margin-top: 15px;
+  background: #a855f7;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.output-box {
+  margin-top: 15px;
+  padding: 15px;
+  background: #faf5ff;
+  border-radius: 12px;
+  border: 1px solid #e9d5ff;
+  display: none;
+  white-space: pre-wrap;
+}
+
+/* ===== Premium Ultra Designer Navbar ===== */
+.premium-navbar {
+  width: 100%;
+  backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.45);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  box-shadow: 0px 6px 25px rgba(0, 0, 0, 0.1);
+}
+
+.nav-container {
+  max-width: 1250px;
+  margin: auto;
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #a855f7, #ec4899);
+ -webkit-background-clip: text;
+  color: transparent;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links li {
+  list-style: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-weight: 600;
+  color: #444;
+  transition: 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #a855f7;
+  transform: translateY(-2px);
+}
+
+.nav-btn {
+  padding: 10px 20px;
+  background: linear-gradient(90deg, #a855f7, #ec4899);
+  border: none;
+  color: white;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: 0.3s;
+}
+
+.nav-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
+}
+
+/* ===== Ultra Premium Website Border ===== */
+body {
+  border: 10px solid rgba(168, 85, 247, 0.20);
+  border-radius: 25px;
+  margin: 15px;
+}
+
+/* ===== Premium About Section ===== */
+.about-section {
+  max-width: 900px;
+  margin: 120px auto;
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0px 10px 40px rgba(0,0,0,0.08);
+  border: 1px solid rgba(168,85,247,0.25);
+}
+
+.about-section h2 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.about-section h3 {
+  margin-top: 25px;
+  font-weight: 700;
+  color: #a855f7;
+}
+
+.about-section p {
+  font-size: 17px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.about-section ul li {
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+
+/* NAVBAR PREMIUM STYLE */
+.premium-navbar {
+    width: 100%;
+    padding: 6px 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(18px);
+    background: rgba(255,255,255,0.35);
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    position: fixed;
+    top: 0;
+    left: 0%;
+    font-family: sans-serif;
+    z-index: 999;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.logo {
+    background: linear-gradient(90deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    color: transparent;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+    list-style: none;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    color: #444;
+    transition: 0.3s;
+}
+
+.nav-links li a:hover {
+    color: #a855f7;
+    transform: translateY(-2px);
+}
+
+/* ABOUT MODAL */
+.about-modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+}
+
+.about-content {
+    width: 55%;
+    background: #fff;
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.18);
+    animation: popup 0.3s ease;
+}
+
+@keyframes popup {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.close-about {
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+    color: #666;
+}
+.close-about:hover { color: #ec4899; }
+
+.testimonials {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.testimonials h2 {
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.t-row {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.t-card {
+    width: 300px;
+    padding: 20px;
+    background: rgba(255,255,255,0.3);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.pricing {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.plans {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+}
+
+.plan-card {
+    width: 260px;
+    padding: 30px;
+    border-radius: 20px;
+    background: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.plan-card.popular {
+    border: 2px solid #6c63ff;
+}
+
+.faq {
+    padding: 60px 0;
+}
+
+.faq-item {
+    width: 60%;
+    margin: 10px auto;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+/* .footer {
+    margin-top: 80px;
+    width: 100%;
+    padding: 40px;
+    background: #f1f1f1;
+    gap: 80px;
+    display: flex;
+    text-align: left;
+    justify-content: space-around;
+    border-top: 2px solid #ddd;
+} */
+
+.footer {
+    margin-top: 80px;
+    width: 100%;
+    padding: 60px 0;          /* Background height bada */
+    background: #f1f1f1d9;    /* Light transparent effect */
+    border-top: 2px solid #ddd;
+    
+    display: flex;
+    justify-content: center;  /* Center alignment */
+}
+
+.footer .f-box {
+    width: 25%;               /* 3 boxes perfect line me */
+    padding: 0 20px;
+}
+
+.footer .f-box h3,
+.footer .f-box h4 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    color: #333;
+}
+
+.f-box h3, .f-box h4 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    flex: 1;
+    color: #333;
+}
+
+.footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 80px 0;
+    background: none; /* Transparent background remove hogaya */
+}
+
+.footer-box {
+    width: 85%;
+    padding: 50px;
+    background: #ffffffd9;    /* Light transparent premium white */
+    border: 2px solid #e2e2e2;
+    border-radius: 18px;      /* Rounded cube shape */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08); /* Premium soft shadow */
+    
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.stats {
+    display: flex;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    gap: 50px;
+    padding: 60px 0;
+}
+
+.stat-box h2 {
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #6c63ff;
+}
+
+
+
+
+  </style>
+</head>
+
+<body>
+
+    <!-- SETTINGS PANEL -->
+<div id="settingsPanel" style="
+    display:none;
+    position: fixed;
+    right: 20px;
+    top: 80px;
+    width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    z-index: 999;
+">
+    <h3 style="margin-top:0;">Settings</h3>
+    <label>Theme:</label>
+    <select id="themeSelect" style="width:100%; padding:6px; margin-bottom:10px;">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+    </select>
+
+    <button id="closeSettings" style="
+        width:100%;
+        padding:8px;
+        border:none;
+        border-radius:8px;
+        background:#5252ff;
+        color:white;
+    ">Close</button>
+</div>
+
+<!-- DEPLOY STATUS POPUP -->
+<div id="deployStatus" style="
+    display:none;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background:white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    z-index:1000;
+    text-align:center;
+">
+    <p id="deployMsg" style="font-size:18px; margin:0;">Deploying...</p>
+</div>
+
+
+  <div class="container">
+
+    <!-- CONTENT TOOLKIT CARD -->
+    <div class="toolkit">
+      <div class="modules" aria-hidden="false">
+        <div class="module">
+          <h4>Module<br><small style="font-weight:600;color:#6b7280">PDF Analyzer</small></h4>
+          <p>Upload a PDF, extract text, headings, and summary.</p>
+        </div>
+        <div class="module">
+          <h4>Module<br><small style="font-weight:600;color:#6b7280">Blog Generator</small></h4>
+          <p>Create SEO-friendly blog posts from title or keywords.</p>
+        </div>
+        <div class="module">
+          <h4>Module<br><small style="font-weight:600;color:#6b7280">Google Scraper</small></h4>
+          <p>Scrape search results and extract snippets and links.</p>
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="topbar">
+          <div class="title">
+            <div>
+              <h2 style="margin-bottom:4px">Content Toolkit</h2>
+              <p>PDF Analyzer · Blog Generator · Google Scraper</p>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn ghost" id="settingsBtn">Settings</button>
+            <button class="btn primary" id="deployBtn">Deploy</button>
+          </div>
+        </div>
+
+        <div class="tabs" role="tablist" aria-label="Modules">
+          <div class="tab active" data-tab="pdf">PDF Analyzer</div>
+          <div class="tab" data-tab="blog">Blog Generator</div>
+          <div class="tab" data-tab="scraper">Google Scraper</div>
+        </div>
+
+        <div class="panel">
+          <!-- Left: controls -->
+          <div class="card" id="leftPanel">
+            <h3 style="margin:0 0 6px 0">PDF Analyzer</h3>
+            <div class="file-area" id="dropArea">
+              <div style="font-size:13px; font-weight:700; color:#344054">Upload a PDF or drag & drop</div>
+              <div style="font-size:13px; color:var(--muted)">Choose file to analyze headings, keywords and summary</div>
+
+              <div style="display:flex;gap:8px;justify-content:center;align-items:center">
+                <label class="choose" for="fileInput">Choose file</label>
+                <input id="fileInput" type="file" accept=".pdf" style="display:none">
+                <button class="choose" id="analyzeBtn" style="background:linear-gradient(90deg,var(--accent-1),var(--accent-2)); color:white; border:0">Analyze</button>
+              </div>
+
+              <div style="font-size:12px;color:var(--muted);margin-top:6px" id="selectedFile">No file selected</div>
+
+              <div class="progress" aria-hidden="true">
+                <span id="progressBar" style="width:0%"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: analysis -->
+          <div class="card analysis">
+            <h4>Analysis results</h4>
+            <p id="analysisText">No results yet. Upload and analyze a PDF to see extracted headings, keywords, and a summary.</p>
+            <div style="margin-top:12px; font-size:12px; color:var(--muted)">
+              <strong>Live preview:</strong> <span id="livePreview">—</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- AI BLOG MANAGER CARD -->
+    <div class="blog-manager">
+      <div class="bm-header">
+        <div class="bm-title">
+          <div class="badge">AI</div>
+          <div>
+            <h3 style="margin:0">AI Blog Manager</h3>
+            <p>Create, manage, and publish your blogs with AI assistance</p>
+          </div>
+        </div>
+
+        <div>
+          <button class="new-blog" id="openNewBlog">+ New Blog</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:10px">
+        <p style="margin:0;color:var(--muted)">Below is a placeholder for blog list. In a real app you'd see saved blog entries here with edit/delete options.</p>
+      </div>
+    </div>
+
+    <!-- Empty State UI -->
+<div class="empty-state" id="emptyState">
+    <div class="empty-icon">📝</div>
+    <h2>No blogs yet</h2>
+    <p>Start creating your first blog post with AI assistance</p>
+    <button class="create-first-btn" onclick="openBlogForm()">+ Create First Blog</button>
+</div>
+
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" style="width:600px; border-radius:16px; padding:24px; background:#ffffff;">
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h2 style="margin:0; font-size:20px; font-weight:700;">Create New Blog</h2>
+      <button id="closeModal" style="border:0; background:none; font-size:20px; cursor:pointer;">×</button>
+    </div>
+
+    <!-- AI Blog Generator Box -->
+    <div style="background:#f8f2ff; padding:16px; border-radius:12px; margin-bottom:20px;">
+      <h3 style="margin:0 0 8px 0; font-size:15px; font-weight:700;">AI Blog Generator</h3>
+      <p style="margin:0; color:#6b7280; font-size:13px;">Enter a topic and let AI create a complete blog post for you</p>
+
+      <div style="display:flex; margin-top:12px; gap:10px;">
+        <input id="autoTopic" placeholder="e.g., Benefits of AI in Healthcare"
+          style="flex:1; padding:10px; border-radius:8px; border:1px solid #ddd; font-size:14px;">
+        <button id="generateAuto" 
+          style="background:#b388ff; color:white; border:0; padding:10px 16px; border-radius:10px; cursor:pointer;">
+          Generate
+        </button>
+      </div>
+    </div>
+
+    <!-- Blog Title -->
+    <input id="blogTitle"
+      style="width:100%; padding:12px; border-radius:10px; margin-bottom:12px; border:1px solid #ddd;"
+      placeholder="Enter blog title">
+
+    <!-- Blog Content -->
+    <textarea id="blogContent"
+      style="width:100%; height:160px; padding:12px; border-radius:10px; border:1px solid #ddd;"
+      placeholder="Write your blog content here..."></textarea>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+      <button id="closeModal" style="padding:10px 16px; border-radius:10px; border:1px solid #ccc; background:#f9fafb; cursor:pointer;">
+        Cancel
+      </button>
+      <button id="publishBlog"
+        style="padding:10px 18px; border-radius:10px; background:#d16bff; color:white; border:0; cursor:pointer;">
+        Publish Blog
+      </button>
+    </div>
+  </div>
+</div>
+
+<section class="pdf-section">
+    <h2 class="section-title">PDF Analyzer & Summary</h2>
+
+    <div class="pdf-card">
+        <h3>Upload PDF</h3>
+
+        <input type="file" id="pdfInput" accept="application/pdf">
+
+        <button id="extractBtn" class="primary-btn">Extract & Summarize</button>
+
+        <div id="pdfText" class="output-box"></div>
+        <div id="summary" class="output-box"></div>
+    </div>
+
+    <section class="testimonials">
+    <h2>What People Say</h2>
+
+    <div class="t-row">
+        <div class="t-card">
+            <p>"Amazing experience! Super fast tools and very useful features."</p>
+            <h4>- User 1</h4>
+        </div>
+
+        <div class="t-card">
+            <p>"Perfect for content creators. Highly recommended."</p>
+            <h4>- User 2</h4>
+        </div>
+
+        <div class="t-card">
+            <p>"Professional, smooth and premium UI. Loved it!"</p>
+            <h4>- User 3</h4>
+        </div>
+    </div>
+
+    <section class="pricing">
+    <h2>Choose Your Plan</h2>
+
+    <div class="plans">
+        <div class="plan-card">
+            <h3>Basic</h3>
+            <p>Free Tools</p>
+            <button>Select</button>
+        </div>
+
+        <div class="plan-card popular">
+            <h3>Pro</h3>
+            <p>Advanced Tools + Speed</p>
+            <button>Select</button>
+        </div>
+
+        <div class="plan-card">
+            <h3>Business</h3>
+            <p>Full Unlimited Access</p>
+            <button>Select</button>
+        </div>
+    </div>
+
+    <section class="faq">
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+        <h3>How does the PDF Analyzer work?</h3>
+        <p>It analyzes headings, keywords and summary instantly.</p>
+    </div>
+
+    <div class="faq-item">
+        <h3>Is this tool free?</h3>
+        <p>Yes! Basic features are free forever.</p>
+    </div>
+
+    <footer class="footer">
+    <div class="f-box">
+        <h3>AI Blog Manager</h3>
+        <p>Smart tools for bloggers & creators.</p>
+    </div>
+
+    <div class="f-box">
+        <h4>Navigation</h4>
+        <p>Home</p>
+        <p>Blogs</p>
+        <p>PDF Tool</p>
+        <p>About</p>
+    </div>
+
+    <div class="f-box">
+        <h4>Contact</h4>
+        <p>Email: buisnessbyravi@gmail.com</p>
+        <p>Phone: 74948 49585</p>
+    </div>
+
+    <section class="stats">
+    <div class="stat-box">
+        <h2>1M+</h2>
+        <p>Words Analyzed</p>
+    </div>
+
+    <div class="stat-box">
+        <h2>5000+</h2>
+        <p>Blogs Generated</p>
+    </div>
+
+    <div class="stat-box">
+        <h2>1200+</h2>
+        <p>PDFs Processed</p>
+    </div>
+
+    </div>
+</section>
+
+</section>
+
+</footer>
+
+</section>
+
+</section>
+
+</section>
+
+</section>
+
+
+
+  <!-- Modal -->
+  <!-- <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h4 id="modalTitle">Create new blog</h4>
+      <p style="margin:0;color:var(--muted);font-size:13px">Generate a blog post with AI. (Demo)</p>
+
+      <div class="row" style="margin-top:12px">
+        <input id="blogTitle" class="input" placeholder="Blog title (e.g. Best ways to boost SEO)" />
+      </div> -->
+
+      <!-- <div class="row" style="margin-top:10px">
+        <input id="blogKeywords" class="input" placeholder="Keywords (comma separated)" />
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button class="btn ghost" id="closeModal">Cancel</button>
+        <button class="btn primary" id="generateBlog">Generate</button>
+      </div>
+    </div>
+  </div> -->
+
+  <script>
+// ----------------------- TABS -----------------------
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    
+    const which = t.dataset.tab;
+    const title = document.querySelector('#leftPanel h3');
+    const selectedFile = document.getElementById('selectedFile');
+    const analysisText = document.getElementById('analysisText');
+
+    if(which === 'pdf'){
+      title.textContent = "PDF Analyzer";
+      selectedFile.textContent = "No file selected";
+      analysisText.textContent = "No results yet. Upload and analyze a PDF.";
+    }
+    else if(which === 'blog'){
+      title.textContent = "Blog Generator";
+      selectedFile.textContent = "Use keywords or click Generate";
+      analysisText.textContent = "Enter keywords and click generate.";
+    }
+    else {
+      title.textContent = "Google Scraper";
+      selectedFile.textContent = "Enter search query";
+      analysisText.textContent = "Enter a query and run scraper.";
+    }
+  });
+});
+
+
+// ----------------------- PDF Extract + Summary -----------------------
+document.getElementById("extractBtn").addEventListener("click", async () => {
+
+  const file = document.getElementById("pdfInput").files[0];
+  if (!file) return alert("Please upload a PDF");
+
+  const pdfTextDiv = document.getElementById("pdfText");
+  const summaryDiv = document.getElementById("summary");
+
+  pdfTextDiv.style.display = "block";
+  pdfTextDiv.innerHTML = "Extracting text...";
+
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+  let extractedText = "";
+
+  for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      extractedText += content.items.map(it=>it.str).join(" ") + "\n";
+  }
+
+  pdfTextDiv.innerHTML = extractedText;
+
+  summaryDiv.style.display = "block";
+  summaryDiv.innerHTML = "Summarizing...";
+
+  const summary = await getSummary(extractedText);
+  summaryDiv.innerHTML = "<strong>Summary:</strong><br>" + summary;
+});
+
+async function getSummary(text) {
+  const apiKey = "YOUR_SMMRY_API_KEY";  // yahan apni API key daalo
+  const url = "https://smmry.com/api/process-summarize";
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "x-api-key": apiKey,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      raw_text: text
+    })
+  });
+
+  const data = await res.json();
+  // SMMRY response me "sm_api_content" me summary hoti hai (check docs)
+  return data.sm_api_content || "Summary not available.";
+}
+
+
+// async function getSummary(text){
+//   try{
+//     const res = await fetch(
+//       "https://api.summarizebot.com/summarize?text=" +
+//       encodeURIComponent(text)
+//     );
+//     const data = await res.json();
+//     return data.summary || "Could not summarize.";
+//   } catch {
+//     return "Summary API error.";
+//   }
+// }
+
+
+
+// ----------------------- LEFT FILE INPUT (PDF ANALYZER) -----------------------
+const fileInput = document.getElementById("fileInput");
+const selectedFile = document.getElementById("selectedFile");
+let lastFile = null;
+
+fileInput.addEventListener("change", e => {
+  const f = e.target.files[0];
+  if (!f) return (selectedFile.textContent = "No file selected");
+  lastFile = f;
+  selectedFile.textContent = `${f.name} (${Math.round(f.size/1024)} KB)`;
+});
+
+// Drag & Drop highlight
+const dropArea = document.getElementById("dropArea");
+
+["dragenter","dragover"].forEach(ev =>
+  dropArea.addEventListener(ev, e => {
+    e.preventDefault();
+    dropArea.style.boxShadow = "0 10px 30px rgba(99,84,255,0.10)";
+  })
+);
+
+["dragleave","drop"].forEach(ev =>
+  dropArea.addEventListener(ev, e => {
+    e.preventDefault();
+    dropArea.style.boxShadow = "none";
+  })
+);
+
+dropArea.addEventListener("drop", e => {
+  const dt = e.dataTransfer;
+  if (dt.files && dt.files[0]) {
+    fileInput.files = dt.files;
+    fileInput.dispatchEvent(new Event("change"));
+  }
+});
+
+
+// ----------------------- ANALYZE BUTTON (SIMULATION) -----------------------
+const analyzeBtn = document.getElementById("analyzeBtn");
+const analysisText = document.getElementById("analysisText");
+const progressBar = document.getElementById("progressBar");
+const livePreview = document.getElementById("livePreview");
+
+analyzeBtn.addEventListener("click", () => {
+  const active = document.querySelector(".tab.active").dataset.tab;
+
+  if (active === "pdf" && !lastFile) {
+    return alert("Please choose a PDF first.");
+  }
+
+  progressBar.style.width = "0%";
+  analysisText.textContent = "Analyzing...";
+  livePreview.textContent = "Generating preview...";
+
+  let p = 0;
+  const timer = setInterval(() => {
+    p += Math.random()*25;
+    if(p>=100) p=100;
+
+    progressBar.style.width = p + "%";
+
+    if (p === 100) {
+      clearInterval(timer);
+
+      if(active === "pdf"){
+        analysisText.innerHTML = `
+          <strong>Headings detected:</strong><br>- Introduction<br>- Methods<br>- Summary<br><br>
+          <strong>Keywords:</strong> AI, Data, Model, Training<br><br>
+          <strong>Short Summary:</strong> PDF has been analyzed successfully.
+        `;
+        livePreview.textContent = "PDF analysis complete.";
+      }
+      else if (active === "blog"){
+        analysisText.innerHTML = `
+          Generated Blog Draft:<br><br>
+          <b>How AI Changes Everything</b><br>
+          AI improves productivity, automates tasks, and enhances creativity.
+        `;
+        livePreview.textContent = "Blog draft ready.";
+      }
+      else {
+        analysisText.innerHTML = `
+          Google Scraper Result:<br>- Result 1<br>- Result 2<br>- Result 3<br>
+        `;
+        livePreview.textContent = "Scraper finished.";
+      }
+    }
+  }, 400);
+});
+
+
+// ----------------------- BLOG MODAL + GENERATOR -----------------------
+const modal = document.getElementById("modalBackdrop");
+const openNewBlog = document.getElementById("openNewBlog");
+
+openNewBlog.addEventListener("click", ()=> modal.style.display="grid");
+
+document.querySelectorAll("#closeModal").forEach(btn =>
+  btn.addEventListener("click", ()=> modal.style.display="none")
+);
+
+// Auto Blog Generate
+document.getElementById("generateAuto").addEventListener("click", ()=>{
+  const topic = document.getElementById("autoTopic").value.trim();
+  if(!topic) return alert("Enter a topic");
+
+  document.getElementById("blogTitle").value = topic;
+  document.getElementById("blogContent").value =
+    `### ${topic}
+
+AI generated blog content...
+- Benefits
+- Use cases
+- Real-world applications
+`;
+});
+
+
+// ----------------------- Publish Blog + LocalStorage -----------------------
+const publishBlog = document.getElementById("publishBlog");
+
+publishBlog.addEventListener("click", ()=>{
+  const title = document.getElementById("blogTitle").value.trim();
+  const content = document.getElementById("blogContent").value.trim();
+
+  if(!title || !content) return alert("Title and content required");
+
+  const blogs = JSON.parse(localStorage.getItem("blogs")) || [];
+  blogs.push({title, content, date: new Date().toLocaleString()});
+  localStorage.setItem("blogs", JSON.stringify(blogs));
+
+  alert("Blog published!");
+  modal.style.display="none";
+  refreshUI();
+});
+
+// Refresh UI
+function refreshUI(){
+  const blogs = JSON.parse(localStorage.getItem("blogs")) || [];
+  const empty = document.getElementById("emptyState");
+
+  if(blogs.length === 0){
+    empty.style.display="block";
+  } else {
+    empty.style.display="none";
+  }
+}
+refreshUI();
+// ABOUT POPUP OPEN/CLOSE
+const aboutBtn = document.getElementById("aboutBtn");
+const aboutModal = document.getElementById("aboutModal");
+const closeAbout = document.getElementById("closeAbout");
+
+aboutBtn.addEventListener("click", () => {
+    aboutModal.style.display = "flex";
+});
+
+closeAbout.addEventListener("click", () => {
+    aboutModal.style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+    if (e.target === aboutModal) {
+        aboutModal.style.display = "none";
+    }
+});
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const settingsBtn = document.getElementById("settingsBtn");
+    const deployBtn = document.getElementById("deployBtn");
+    const settingsPanel = document.getElementById("settingsPanel");
+    const closeSettings = document.getElementById("closeSettings");
+    const deployStatus = document.getElementById("deployStatus");
+    const deployMsg = document.getElementById("deployMsg");
+
+    // ------ SETTINGS OPEN ------
+    settingsBtn.addEventListener("click", () => {
+        settingsPanel.style.display = "block";
+    });
+
+    // ------ SETTINGS CLOSE ------
+    closeSettings.addEventListener("click", () => {
+        settingsPanel.style.display = "none";
+    });
+
+    // ------ DEPLOY FUNCTION ------
+    deployBtn.addEventListener("click", () => {
+        deployStatus.style.display = "block";
+        deployMsg.innerText = "Deploying...";
+
+        // Fake loading for 2 seconds
+        setTimeout(() => {
+            deployMsg.innerText = "Deploy Successful! 🚀";
+            
+            // hide after 2 sec
+            setTimeout(() => {
+                deployStatus.style.display = "none";
+            }, 2000);
+
+        }, 2000);
+    });
+
+});
+
+
+
+
+const quote = "“Success comes to those who create, not those who wait.”";
+let i = 0;
+
+function typeQuote() {
+    if (i < quote.length) {
+        document.getElementById("quoteText").innerHTML += quote.charAt(i);
+        i++;
+        setTimeout(typeQuote, 45);
+    }
+}
+
+window.onload = () => {
+    setTimeout(typeQuote, 1000);
+};
+
+
+
+</script>
