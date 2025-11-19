@@ -1439,6 +1439,20 @@ window.onload = () => {
     setTimeout(typeQuote, 1000);
 };
 
+      
+document.addEventListener("DOMContentLoaded", () => {
+    const navbar = document.querySelector("nav ul");
+
+    if (navbar) {
+        navbar.innerHTML += `
+            <li><a href="pages/blog.html">Blog</a></li>
+            <li><a href="tools/pdf.html">PDF Tool</a></li>
+        `;
+    }
+});
+
+
+
 
 
 </script>
